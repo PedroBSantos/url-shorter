@@ -137,7 +137,7 @@ services:
     container_name: redis-container
     restart: always
     ports:
-      - 6379
+      - 6379:6379
     environment:
       - TZ=America
     networks:
