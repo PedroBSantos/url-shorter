@@ -13,6 +13,10 @@
                                              :final-base-url final-base-url}
                                             {:save-url urls-repository-write
                                              :contains-url? urls-repository-read})]
-    (if (true? (get url-shorted :already-shorted))
-      {:status 409 :body url-shorted}
-      {:status (if (true? (get url-shorted :valid-shorting-context)) 200 400) :body url-shorted})))
+    (if (get url-shorted :already-shorted)
+      {:status 409 
+       :body url-shorted}
+      {:status (if (get url-shorted :valid-shorting-context) 
+                 200 
+                 400) 
+       :body url-shorted})))
