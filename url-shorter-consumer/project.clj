@@ -14,7 +14,9 @@
   :main ^:skip-aot url-shorter-consumer.core
   :target-path "target/%s"
   :profiles {:dev {:aot :all
-                   :jvm-opts ["-Dclojure.compiler.direct-linking=true"
+                   :jvm-opts ["-javaagent:resources/otel/opentelemetry-javaagent.jar"
+                              "-Dotel.javaagent.configuration-file=resources/config/otel.dev.properties"
+                              "-Dclojure.compiler.direct-linking=true"
                               "-Dconf=config/dev.edn"
                               "-Dclojure.tools.logging.factory=clojure.tools.logging.impl/log4j2-factory"
                               "-Djava.util.logging.manager=org.apache.logging.log4j.jul.LogManager"]}
