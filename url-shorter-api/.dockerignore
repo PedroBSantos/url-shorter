@@ -1,0 +1,6 @@
+.git
+.vscode
+target
+.calva
+.lsp
+.clj-kondo

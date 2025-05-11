@@ -1,0 +1,18 @@
+{:rabbitmq {:config {:host "localhost"
+                     :port 5672
+                     :username "url-shorter"
+                     :password "123456"
+                     :vhost "url-shorter"}
+            :consumer-queue {:durable true
+                             :auto-delete false
+                             :exclusive false
+                             :queue-name "url.shorter.api.v1.url-shorted-created"
+                             :exchange-name "url-shorter-api"
+                             :routing-key "created"}
+            :publisher-queue {:durable true
+                              :auto-delete false
+                              :exclusive false
+                              :queue-name "url.shorter.api.v1.shorting-failure"
+                              :exchange-name "url-shorter-api"
+                              :routing-key "failure"}}
+ :redis-db {:uri "redis://localhost:6379"}}

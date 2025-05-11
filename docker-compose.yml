@@ -1,0 +1,174 @@
+services:
+  url-shorter-consumer:
+    container_name: url-shorter-consumer-container
+    build:
+      context: ./url-shorter-consumer
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      - TZ=America/Recife
+    networks:
+      - default
+    depends_on:
+      - collector
+      - rabbitmq
+      - redis
+
+  url-shorter-api:
+    container_name: url-shorter-api-container
+    build:
+      context: ./url-shorter-api
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - 8080:8080
+    environment:
+      - TZ=America/Recife
+    networks:
+      - default
+    depends_on:
+      - collector
+      - url-shorter-consumer
+      - rabbitmq
+      - redis
+
+  grafana:
+    image: grafana/grafana:12.0.0
+    container_name: grafana-container
+    restart: always
+    environment:
+      - TZ=America/Recife
+    volumes:
+      - ./telemetry/grafana-datasources.yml:/etc/grafana/provisioning/datasources/datasources.yaml
+      - grafana:/var/lib/grafana
+    ports:
+      - 3000:3000
+    networks:
+      - default
+    depends_on:
+      - collector
+
+  prometheus:
+    image: prom/prometheus:v3.3.1
+    container_name: prometheus-container
+    restart: always
+    environment:
+      - TZ=America/Recife
+    ports:
+      - 9090:9090
+    volumes:
+      - ./telemetry/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus:/prometheus
+    command: "--web.enable-remote-write-receiver --config.file=/etc/prometheus/prometheus.yml"
+    networks:
+      - default
+    depends_on:
+      - blackbox
+  
+  blackbox:
+    image: prom/blackbox-exporter:v0.26.0
+    container_name: blackbox-container
+    restart: always
+    environment:
+      - TZ=America/Recife
+    ports:
+      - 9115:9115
+    volumes:
+      - ./telemetry/blackbox.yml:/config/blackbox.yml
+    command: "--config.file=/config/blackbox.yml"
+    networks:
+      - default
+
+  collector:
+    image: ghcr.io/open-telemetry/opentelemetry-collector-releases/opentelemetry-collector-contrib:0.125.0
+    container_name: otlp-container
+    command: "--config /etc/otel-config.yaml"
+    environment:
+      - TZ=America/Recife
+    volumes:
+      - ./telemetry/otel-config.yaml:/etc/otel-config.yaml
+    ports:
+      - "4317:4317"
+      - "4318:4318"
+      - "55679:55679"
+      - "1888:1888"
+      - "8888:8888"
+      - "8889:8889"
+    depends_on:
+      - loki
+      - tempo
+      - prometheus
+    networks:
+      - default
+
+  loki:
+    image: grafana/loki:3.5.0
+    container_name: loki-container
+    volumes:
+      - ./telemetry/local-config.yaml:/etc/loki/local-config.yaml
+      - loki:/loki
+    command: -config.file=/etc/loki/local-config.yaml
+    environment:
+      - TZ=America/Recife
+    ports:
+      - "3100:3100"
+      - "9095:9095"
+    networks:
+      - default
+  
+  tempo:
+    image: grafana/tempo:2.7.2
+    container_name: tempo-container
+    command: [ "-config.file=/etc/tempo.yaml" ]
+    volumes:
+      - ./telemetry/tempo.yml:/etc/tempo.yaml
+      - ./telemetry/overrides.yml:/etc/overrides.yaml
+      - tempo:/var/tempo
+      - tempo:/tmp/tempo
+    environment:
+      - TZ=America/Recife
+    ports:
+      - "3200:3200"
+    networks:
+      - default
+  
+  redis:
+    image: redis:latest
+    container_name: redis-container
+    restart: always
+    ports:
+      - 6379
+    environment:
+      - TZ=America
+    networks:
+      - default
+  
+  rabbitmq:
+    image: rabbitmq:management-alpine
+    container_name: rabbitmq-container
+    restart: always
+    ports:
+      - 15672:15672
+      - 5672:5672
+    networks:
+      - default
+    environment:
+      - TZ=America
+      - RABBITMQ_DEFAULT_USER=url-shorter
+      - RABBITMQ_DEFAULT_PASS=123456
+      - RABBITMQ_DEFAULT_VHOST=url-shorter
+
+networks:
+  default:
+    external: true
+    name: dev
+
+volumes:
+  prometheus:
+    external: false
+  loki:
+    external: false
+  tempo:
+    external: false
+  grafana:
+    external: false

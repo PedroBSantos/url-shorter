@@ -1,0 +1,14 @@
+{:url-shorting-params {:hours-to-expire 24
+                       :final-base-url "https://url-shorter.com"}
+ :rabbitmq {:config {:host "localhost"
+                     :port 5672
+                     :username "url-shorter"
+                     :password "123456"
+                     :vhost "url-shorter"}
+            :queue {:durable true
+                    :auto-delete false
+                    :exclusive false
+                    :queue-name "url.shorter.api.v1.url-shorted-created"
+                    :exchange-name "url-shorter-api"
+                    :routing-key "created"}}
+ :redis-db {:uri "redis://localhost:6379"}}
