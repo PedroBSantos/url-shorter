@@ -21,7 +21,7 @@ docker compose -f docker-compose.yml -p url-shorter down
 ## Encurtando URL
 
 ```curl
-curl --location 'http://host:8080/urls/short-url' \
+curl --location 'http://localhost:8080/urls/short-url' \
 --header 'Content-Type: application/json' \
 --data '{
     "url": "https://www.url-to-short.com"
