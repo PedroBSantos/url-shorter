@@ -34,3 +34,10 @@ Respostas:
 - 409 ➜ url já encurtada
 - 400 ➜ url para ser encurtada inválida
 - 500 ➜ Erro interno no servidor
+
+## Observabilidade
+
+- Tempo: Tracing
+- Loki: Logging
+- Prometheus: Metricas
+- Grafana: <http://localhost:3000> user: admin password: admin
