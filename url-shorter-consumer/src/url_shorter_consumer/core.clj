@@ -7,4 +7,5 @@
 (defn -main
   [& _]
   (l/info "Inicializando consumer RabbitMQ...")
-  (r/consume r/consumer-queue-config c/consumer-callback))
+  (r/consume r/consumer-queue-config c/consumer-callback)
+  (l/info "Consumer RabbitMQ inicializado"))
