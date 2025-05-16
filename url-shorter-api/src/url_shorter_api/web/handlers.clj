@@ -20,3 +20,7 @@
                  200 
                  400) 
        :body url-shorted})))
+
+(defn health-check-handler [_]
+  {:status 200
+   :body {:healthy true}})

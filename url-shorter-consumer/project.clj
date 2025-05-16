@@ -10,7 +10,8 @@
                  [org.apache.logging.log4j/log4j-jul "2.24.3"]
                  [org.apache.logging.log4j/log4j-slf4j2-impl "2.24.3"]
                  [com.novemberain/langohr "5.5.0"]
-                 [celtuce-core "0.4.2"]]
+                 [celtuce-core "0.4.2"]
+                 [com.github.steffan-westcott/clj-otel-api "0.2.7"]]
   :main ^:skip-aot url-shorter-consumer.core
   :target-path "target/%s"
   :profiles {:dev {:aot :all

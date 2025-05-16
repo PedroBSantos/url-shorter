@@ -80,7 +80,7 @@ services:
       - default
 
   collector:
-    image: ghcr.io/open-telemetry/opentelemetry-collector-releases/opentelemetry-collector-contrib:0.125.0
+    image: ghcr.io/open-telemetry/opentelemetry-collector-releases/opentelemetry-collector-contrib:0.126.0
     container_name: otlp-container
     command: "--config /etc/otel-config.yaml"
     environment:

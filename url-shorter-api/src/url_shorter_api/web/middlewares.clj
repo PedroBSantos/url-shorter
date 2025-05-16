@@ -3,7 +3,8 @@
             [clojure.edn :as edn]
             [clojure.java.io :as io]
             [url-shorter-api.infra.rabbitmq :as r]
-            [url-shorter-api.infra.redis :as rd]))
+            [url-shorter-api.infra.redis :as rd]
+            [url-shorter-api.infra.prometheus-metrics :as p]))
 
 (defonce application-conf (System/getProperty "conf"))
 (defonce url-shorting-params (-> application-conf
@@ -22,7 +23,7 @@
 (defn wrap-rabbitmq-publisher [handler]
   (fn [request]
     (l/info "Adicionando publisher do rabbitmq na requisição")
-    (let [request-with-rabbitmq-publisher (assoc request :rabbitmq-publisher (partial r/publish r/queue-config))
+    (let [request-with-rabbitmq-publisher (assoc request :rabbitmq-publisher (fn [x] (r/publish r/queue-config x) (p/inc-url-encurtada-enviada-fila 1)))
           response (handler request-with-rabbitmq-publisher)]
       response)))
 
